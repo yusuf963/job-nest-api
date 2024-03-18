@@ -6,7 +6,9 @@ const dbURI =
 	`mongodb+srv://${process.env.JOB_NEST_DB_USERNAME}:${process.env.JOB_NEST_DB_PASSWORD}@job-next-cluster.jtaevla.mongodb.net/?retryWrites=true&w=majority&appName=job-next-cluster`;
 
 const connectToDb = () => {
-	const clientOptions = { serverApi: { version: '1', strict: true, deprecationErrors: true } };
+	const clientOptions = {
+		serverApi: { version: '1', strict: true, deprecationErrors: true },
+	};
 
 	try {
 		return mongoose.connect(dbURI, clientOptions);
