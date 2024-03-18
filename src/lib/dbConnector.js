@@ -3,8 +3,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 const dbURI =
 	process.env.DB_URI ||
-	`mongodb+srv://${process.env.JOB_NEST_DB_USERNAME}:${process.env.JOB_NEST_DB_PASSWORD}@job-next-cluster.jtaevla.mongodb.net/?retryWrites=true&w=majority&appName=job-next-cluster`;
-
+	`mongodb+srv://${process.env.JOBTAL_DB_USERNAME}:${process.env.JOBTAL_DB_PASSWORD}@job-next-cluster.jtaevla.mongodb.net/jobtal?retryWrites=true&w=majority&appName=job-next-cluster`;
 const connectToDb = () => {
 	const clientOptions = {
 		serverApi: { version: '1', strict: true, deprecationErrors: true },

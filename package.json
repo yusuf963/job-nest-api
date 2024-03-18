@@ -1,13 +1,15 @@
 {
-	"name": "job-nest-api",
+	"name": "jobtal-api",
 	"version": "1.0.0",
-	"description": "api for web and native app",
+	"description": "api for web and native apps",
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"format": "prettier --log-level warn --write '**/*.{ts,js,json,md}'",
-		"eslint": "eslint . --ext=jsx --ext=js --ext=tsx --ext=ts"
+		"eslint": "eslint . --ext=jsx --ext=js --ext=tsx --ext=ts",
+		"debug": "nodemon src/server.js",
+		"start:prod": "node src/server.js"
 	},
 	"repository": {
 		"type": "git",
@@ -32,7 +34,10 @@
 		"dotenv": "^16.4.5",
 		"express": "^4.18.3",
 		"helmet": "^7.1.0",
+		"jsonwebtoken": "^9.0.2",
 		"mongoose": "^8.2.2",
+		"mongoose-hidden": "^1.9.1",
+		"mongoose-unique-validator": "^5.0.0",
 		"passport": "^0.7.0"
 	},
 	"devDependencies": {
