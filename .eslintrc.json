@@ -1,0 +1,29 @@
+{
+	"env": {
+		"es2021": true,
+		"node": true
+	},
+	"extends": ["eslint:recommended"],
+	"overrides": [
+		{
+			"files": ["**/*.spec.js", "**/*.spec.ts"],
+			"env": {
+				"mocha": true
+			}
+		}
+	],
+	"parserOptions": {
+		"ecmaVersion": "latest",
+		"sourceType": "module"
+	},
+	"rules": {
+		"no-unused-vars": "warn",
+		"no-console": "warn",
+		"indent": "off",
+		"func-names": "warn",
+		"comma-dangle": 0,
+		"linebreak-style": ["error", "unix"],
+		"quotes": ["warn", "single"],
+		"semi": ["warn", "always"]
+	}
+}
