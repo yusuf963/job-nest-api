@@ -7,6 +7,8 @@ import {
 	getAllUsers,
 	getOneUser,
 	confirmUserVerification,
+	googleAuthInitiate,
+	googleAuthCallback,
 } from '../controller/user.js';
 
 import { secureRoute, adminRoute } from '../lib/secureRoute.js';
@@ -21,6 +23,9 @@ router
 			'<h2 style="color: red; text-align: center;">Jobs route coming soon</h2>',
 		),
 	);
+
+router.route('/auth/google').get(googleAuthInitiate);
+router.route('/auth/google/callback').get(googleAuthCallback);
 
 router.route('/register').post(registerUser);
 router.route('/login').post(loginUser);

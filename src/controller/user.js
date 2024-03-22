@@ -1,5 +1,56 @@
 import User from '../model/user.js';
 import jwt from 'jsonwebtoken';
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+
+const configureGoogleAuth = () => {
+	passport.use(
+		new GoogleStrategy(
+			{
+				clientID: process.env.GOOGLE_CLIENT_ID,
+				clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+				callbackURL: 'http://localhost:5000/auth/google/callback',
+				scope: ['email', 'profile'],
+			},
+			(_accessToken, _refreshToken, profile, done) => {
+				done(null, profile);
+			},
+		),
+	);
+};
+
+const configurePassport = () => {
+	passport.serializeUser((user, done) => {
+		done(null, user.id);
+	});
+
+	passport.deserializeUser(async (id, done) => {
+		try {
+			const user = await user.findById(id);
+			done(null, user);
+		} catch (err) {
+			done(err, null);
+		}
+	});
+};
+
+configureGoogleAuth();
+configurePassport();
+
+const googleAuthInitiate = () => {
+	passport.authenticate('google', {
+		scope: ['profile', 'email'],
+		session: false,
+	});
+};
+
+const googleAuthCallback = () => {
+	passport.authenticate('google', {
+		failureRedirect: '/login',
+		successRedirect: '/',
+		session: false,
+	});
+};
 
 const registerUser = async (req, res, next) => {
 	if (req.body.password !== req.body.confirmPassword) {
@@ -189,4 +240,6 @@ export {
 	getAllUsers,
 	getOneUser,
 	confirmUserVerification,
+	googleAuthInitiate,
+	googleAuthCallback,
 };
