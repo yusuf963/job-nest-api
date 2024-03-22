@@ -14,6 +14,10 @@ import environment from '../lib/environment.js';
 
 const router = express.Router();
 
+router.route('/').get((req, res) => {
+	res.sendFile('index.html', { root: '.' });
+});
+
 router
 	.route('/job')
 	.get((_req, res) =>
