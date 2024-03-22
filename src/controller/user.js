@@ -37,21 +37,6 @@ const configurePassport = () => {
 configureGoogleAuth();
 configurePassport();
 
-const googleAuthInitiate = () => {
-	passport.authenticate('google', {
-		scope: ['profile', 'email'],
-		session: false,
-	});
-};
-
-const googleAuthCallback = () => {
-	passport.authenticate('google', {
-		failureRedirect: '/login',
-		successRedirect: '/',
-		session: false,
-	});
-};
-
 const registerUser = async (req, res, next) => {
 	if (req.body.password !== req.body.confirmPassword) {
 		return res.send({ status: 400, message: 'Passwords do not match' });
@@ -240,6 +225,4 @@ export {
 	getAllUsers,
 	getOneUser,
 	confirmUserVerification,
-	googleAuthInitiate,
-	googleAuthCallback,
 };
