@@ -9,6 +9,12 @@ import {
 	confirmUserVerification,
 } from '../controller/user.js';
 
+import {
+	handelGetAllJobs,
+	handelGetSingleJob,
+	handelCreateJobPost,
+} from '../controller/jobPost.js';
+
 import { secureRoute, adminRoute } from '../lib/secureRoute.js';
 import environment from '../lib/environment.js';
 
@@ -36,5 +42,8 @@ router
 	.get(adminRoute, getOneUser)
 	.put(secureRoute, updateUser)
 	.delete(secureRoute, deleteUser);
+
+router.route('/jobpost').get(handelGetAllJobs).post(handelCreateJobPost);
+router.route('/jobpost/:id').get(handelGetSingleJob);
 
 export default router;

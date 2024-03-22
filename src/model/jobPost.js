@@ -1,19 +1,18 @@
 import mongoose from 'mongoose';
-import user from './user';
 
 const jobPostSchema = new mongoose.Schema({
 	title: {
 		type: String,
 		required: true,
 		validate: (title) =>
-			typeof title === 'string' && title.length > 0 && title.length < 500,
+			typeof title === 'string' && title.length > 1 && title.length < 500,
 	},
 	companyName: {
 		type: String,
 		required: false,
 		validate: (companyName) =>
 			typeof companyName === 'string' &&
-			companyName.length > 0 &&
+			companyName.length > 1 &&
 			companyName.length < 300,
 	},
 	jobPostOwner: {
@@ -21,13 +20,13 @@ const jobPostSchema = new mongoose.Schema({
 		ref: 'User',
 		required: true,
 	},
-	WorkplaceType: {
+	workplaceType: {
 		type: String,
 		required: true,
 		default: 'remote',
 		enum: ['onsite', 'hybrid', 'remote'],
 	},
-	JobType: {
+	jobType: {
 		type: String,
 		required: true,
 		default: 'fulltime',
@@ -55,7 +54,7 @@ const jobPostSchema = new mongoose.Schema({
 		required: true,
 		validate: (description) =>
 			typeof description === 'string' &&
-			description.length > 0 &&
+			description.length > 1 &&
 			description.length < 2000,
 	},
 	otherDescription: {
@@ -63,11 +62,11 @@ const jobPostSchema = new mongoose.Schema({
 		required: false,
 		validate: (otherDescription) =>
 			typeof otherDescription === 'string' &&
-			otherDescription.length > 0 &&
+			otherDescription.length > 1 &&
 			otherDescription.length < 2000,
 	},
 	Benefits: {
-		type: Array[String],
+		type: [String],
 		required: false,
 	},
 	requirements: {
@@ -87,16 +86,19 @@ const jobPostSchema = new mongoose.Schema({
 		required: false,
 	},
 	salary: {
-		type: Number | String,
+		type: mongoose.Schema.Types.Mixed,
 		required: false,
 	},
 	postedAt: {
 		type: Date,
 		default: Date.now,
 	},
-	applicant: [user],
+	applicant: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'User',
+		},
+	],
 });
 
-const JobPost = mongoose.model('JobPost', jobPostSchema);
-
-module.exports = JobPost;
+export default mongoose.model('JobPost', jobPostSchema);

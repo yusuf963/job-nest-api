@@ -2,6 +2,7 @@ import User from '../model/user.js';
 import jwt from 'jsonwebtoken';
 
 const registerUser = async (req, res, next) => {
+	console.log('321', req.body);
 	if (req.body.password !== req.body.confirmPassword) {
 		return res.send({ status: 400, message: 'Passwords do not match' });
 	}
