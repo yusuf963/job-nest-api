@@ -25,5 +25,3 @@ function mountTime({ duration, operator }) {
 }
 
 export { sleep, advanceTime, mountTime };
-
-//https://github.com/bbc/tvr-web-experimentation/blob/08419d372ff1f41c095d05f4ee377bac9b09b242/test/client.js#L49
