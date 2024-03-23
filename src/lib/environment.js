@@ -8,6 +8,7 @@ const dev = {
 	userDelete: 'http://localhost:5000/user/:id',
 	userUpdate: 'http://localhost:5000/user/:id',
 	usersGetAll: '/user',
+	googleCallbackURL: 'http://localhost:5000/auth/google/callback',
 	itemGetAll: 'http://localhost:5000/item',
 	itemGetOne: 'http://localhost:5000/item/:id',
 	itemDelete: 'http://localhost:5000/item/:id',
