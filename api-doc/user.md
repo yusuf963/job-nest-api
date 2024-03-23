@@ -1,6 +1,6 @@
 ### [see server HTTP status code for more understanding](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status)
 
-## User Schema Description
+## User Schema
 
 | Field         | Required | Type    | Rule                                                                                     | Description                                                                                         |
 | ------------- | -------- | ------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
