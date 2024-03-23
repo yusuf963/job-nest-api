@@ -99,9 +99,74 @@ const handelCreateJobPost = async (req, res, next) => {
 	}
 };
 
-const handelUpdateJobPost = async (req, res, next) => {};
+const updateJobPostResourceFromDB = async (jobPostId) => {
+	try {
+		return await JobPost.findById(jobPostId);
+	} catch (error) {
+		throw new APIError(
+			'NOT FOUND',
+			HttpStatusCode.NOT_FOUND,
+			true,
+			'Something went wrong while retriving resource from DB',
+		);
+	}
+};
 
-const handelDeleteJobPost = async (req, res, next) => {};
+const handelUpdateJobPost = async (req, res, next) => {
+	const currentUser = req.currentUser;
+	try {
+		const jobPostToUpdate = await updateJobPostResourceFromDB(req.params.id);
+		if (!jobPostToUpdate) {
+			return res.send({ message: 'No job post found with that ID' });
+		}
+		if (
+			!currentUser?.isAdmin &&
+			!jobPostToUpdate.jobPostOwner.equals(currentUser._id)
+		) {
+			return res
+				.status(401)
+				.send({ message: 'Unauthorized you can not modify this job post' });
+		}
+		jobPostToUpdate.set(req.body);
+		jobPostToUpdate.save();
+		res.send(jobPostToUpdate);
+	} catch (err) {
+		next(err);
+	}
+};
+
+const deleteJobPostResourceFromDB = async (jobPostId) => {
+	try {
+		return await JobPost.findById(jobPostId);
+	} catch (error) {
+		throw new APIError(
+			'NOT FOUND',
+			HttpStatusCode.NOT_FOUND,
+			true,
+			'Something went wrong while retriving resource from DB',
+		);
+	}
+};
+const handelDeleteJobPost = async (req, res, next) => {
+	const currentUser = req.currentUser;
+
+	try {
+		const jobPostToDelete = await deleteJobPostResourceFromDB(req.params.id);
+		if (!jobPostToDelete) {
+			return res.send(`Job post with id ${req.params.id} not found`);
+		}
+		if (
+			!currentUser?.isAdmin &&
+			!jobPostToDelete.jobPostOwner._id.equals(currentUser._id)
+		) {
+			return res.status(401).send({ message: 'Unauthorized' });
+		}
+		jobPostToDelete.deleteOne();
+		return res.send(jobPostToDelete);
+	} catch (error) {
+		next(error);
+	}
+};
 
 export {
 	handelGetAllJobs,

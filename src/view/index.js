@@ -1,4 +1,5 @@
 import express from 'express';
+import { secureRoute, adminRoute } from '../lib/util/secureRoute.js';
 import {
 	registerUser,
 	loginUser,
@@ -13,9 +14,10 @@ import {
 	handelGetAllJobs,
 	handelGetSingleJob,
 	handelCreateJobPost,
+	handelUpdateJobPost,
+	handelDeleteJobPost,
 } from '../controller/jobPost.js';
 
-import { secureRoute, adminRoute } from '../lib/secureRoute.js';
 import environment from '../lib/environment.js';
 
 const router = express.Router();
@@ -44,6 +46,10 @@ router
 	.delete(secureRoute, deleteUser);
 
 router.route('/jobpost').get(handelGetAllJobs).post(handelCreateJobPost);
-router.route('/jobpost/:id').get(handelGetSingleJob);
+router
+	.route('/jobpost/:id')
+	.get(secureRoute, handelGetSingleJob)
+	.put(secureRoute, handelUpdateJobPost)
+	.delete(adminRoute, handelDeleteJobPost);
 
 export default router;
