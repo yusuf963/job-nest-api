@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
+		"test": "",
 		"format": "prettier --log-level warn --write '**/*.{ts,js,json,md}'",
 		"eslint": "eslint . --ext=jsx --ext=js --ext=tsx --ext=ts",
 		"debug": "nodemon src/server.js",
