@@ -1,5 +1,6 @@
 import express from 'express';
 import { secureRoute, adminRoute } from '../lib/util/secureRoute.js';
+import passport from 'passport';
 import {
 	registerUser,
 	loginUser,
@@ -33,6 +34,20 @@ router
 			'<h2 style="color: red; text-align: center;">Jobs route coming soon</h2>',
 		),
 	);
+
+router.route('/auth/google').get(
+	passport.authenticate('google', {
+		scope: ['profile', 'email'],
+		session: false,
+	}),
+);
+router.route('/auth/google/callback').get(
+	passport.authenticate('google', {
+		failureRedirect: '/login',
+		successRedirect: '/',
+		session: false,
+	}),
+);
 
 router.route('/register').post(registerUser);
 router.route('/login').post(loginUser);
