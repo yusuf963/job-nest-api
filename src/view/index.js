@@ -19,6 +19,12 @@ import {
 	handelDeleteJobPost,
 } from '../controller/jobPost.js';
 
+import {
+	forgotPassword,
+	verifyResetCode,
+	resetPassword,
+} from '../controller/forgotPassword.js';
+
 import environment from '../lib/environment.js';
 
 const router = express.Router();
@@ -66,5 +72,9 @@ router
 	.get(secureRoute, handelGetSingleJob)
 	.put(secureRoute, handelUpdateJobPost)
 	.delete(adminRoute, handelDeleteJobPost);
+
+router.route('/forgot-password').post(forgotPassword);
+router.route('/verify-reset-code').post(verifyResetCode);
+router.route('/reset-password').put(resetPassword);
 
 export default router;

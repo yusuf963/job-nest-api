@@ -22,7 +22,7 @@
 		"indent": "off",
 		"func-names": "warn",
 		"comma-dangle": 0,
-		"linebreak-style": ["error", "unix"],
+		"linebreak-style": ["error", "unix", "windows"],
 		"quotes": ["warn", "single"],
 		"semi": ["warn", "always"]
 	}
