@@ -7,6 +7,8 @@ import cors from 'cors';
 
 import connectToDb from './lib/dbConnector.js';
 import routes from './view/index.js';
+import globalError from './lib/middleware/globalError.js';
+import { APIError, HttpStatusCode } from './lib/util/errorHandler.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -31,6 +33,19 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 connectToDb();
+
+app.all('*', (req, _res, next) => {
+	return next(
+		new APIError(
+			'BAD REQUEST',
+			HttpStatusCode.BAD_REQUEST,
+			true,
+			`Can't find this ${req.originalUrl} route in the server`,
+		),
+	);
+});
+
+app.use(globalError);
 
 app.listen(port, () => {
 	// eslint-disable-next-line
