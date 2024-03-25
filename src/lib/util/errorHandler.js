@@ -10,7 +10,7 @@ class BaseError extends Error {
 	httpCode;
 	isOperational;
 
-	constructor(name, httpCode, description, isOperational) {
+	constructor(name, httpCode, isOperational, description) {
 		super(description);
 		Object.setPrototypeOf(this, new.target.prototype);
 
