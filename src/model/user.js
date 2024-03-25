@@ -1,3 +1,5 @@
+import crypto from 'node:crypto';
+
 import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 import bcrypt from 'bcrypt';
@@ -32,6 +34,10 @@ const userSchema = new mongoose.Schema({
 			'Password must contain at least 8 characters, 1 uppercase, 1 lowercase, 1 number and 1 special character',
 		],
 	},
+	passwordResetCode: String,
+	passwordResetExpired: Date,
+	passwordResetVerifyed: Boolean,
+
 	image: {
 		type: String,
 		required: false,
@@ -61,6 +67,17 @@ userSchema.pre('save', function (next) {
 userSchema.methods.validatePassword = function (password) {
 	return bcrypt.compareSync(password, this.password);
 };
+
+userSchema.methods.generateResetCode = function () {
+	const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+	this.passwordResetCode = crypto.Hash('sha256')
+		.update(resetCode)
+		.digest('hex');
+
+	this.passwordResetExpired = Date.now() + 10 * 60 * 1000;
+	this.passwordResetVerifyed = false;
+	return resetCode;
+}
 
 userSchema.plugin(uniqueValidator);
 
