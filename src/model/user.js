@@ -70,14 +70,15 @@ userSchema.methods.validatePassword = function (password) {
 
 userSchema.methods.generateResetCode = function () {
 	const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
-	this.passwordResetCode = crypto.Hash('sha256')
+	this.passwordResetCode = crypto
+		.Hash('sha256')
 		.update(resetCode)
 		.digest('hex');
 
 	this.passwordResetExpired = Date.now() + 10 * 60 * 1000;
 	this.passwordResetVerifyed = false;
 	return resetCode;
-}
+};
 
 userSchema.plugin(uniqueValidator);
 

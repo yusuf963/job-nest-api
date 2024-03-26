@@ -20,6 +20,14 @@ import {
 } from '../controller/jobPost.js';
 
 import {
+	handelGetAllCourses,
+	handelCreateCourse,
+	handelGetSingleCourse,
+	handelUpdateCourse,
+	handelDeleteCourse,
+} from '../controller/course.js';
+
+import {
 	forgotPassword,
 	verifyResetCode,
 	resetPassword,
@@ -76,5 +84,15 @@ router
 router.route('/forgot-password').post(forgotPassword);
 router.route('/verify-reset-code').post(verifyResetCode);
 router.route('/reset-password').put(resetPassword);
+
+router
+	.route('/courses')
+	.get(secureRoute, handelGetAllCourses)
+	.post(adminRoute, handelCreateCourse);
+router
+	.route('/courses/:id')
+	.get(secureRoute, handelGetSingleCourse)
+	.put(secureRoute, handelUpdateCourse)
+	.delete(adminRoute, handelDeleteCourse);
 
 export default router;
