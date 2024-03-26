@@ -3,7 +3,13 @@ import asyncHandler from 'express-async-handler';
 import { APIError, HttpStatusCode } from '../lib/util/errorHandler.js';
 import Course from '../model/course.js';
 
-const retriveCourseFromDB = asyncHandler(async () => await Course.find({}));
+const retriveCourseFromDB = asyncHandler(
+	async () =>
+		await Course.find({}).populate({
+			path: 'creator',
+			select: 'username email',
+		}),
+);
 
 const handelGetAllCourses = asyncHandler(async (_req, res) => {
 	const allCourses = await retriveCourseFromDB();
@@ -23,7 +29,13 @@ const handelCreateCourse = asyncHandler(async (req, res) => {
 });
 
 const retriveSignleCourseResourceFromDB = asyncHandler(
-	async (courseId) => await Course.findById(courseId).exec(),
+	async (courseId) =>
+		await Course.findById(courseId)
+			.populate({
+				path: 'creator',
+				select: 'username email',
+			})
+			.exec(),
 );
 
 const handelGetSingleCourse = asyncHandler(async (req, res, next) => {
@@ -59,7 +71,10 @@ const handelUpdateCourse = asyncHandler(async (req, res, next) => {
 			),
 		);
 	}
-	if (!currentUser?.isAdmin) {
+	if (
+		!currentUser?.isAdmin &&
+		!courseToUpdate.creator.equals(currentUser._id)
+	) {
 		return res
 			.status(401)
 			.send({ message: 'Unauthorized you can not modify this course' });
@@ -87,7 +102,10 @@ const handelDeleteCourse = asyncHandler(async (req, res, next) => {
 			),
 		);
 	}
-	if (!currentUser?.isAdmin) {
+	if (
+		!currentUser?.isAdmin &&
+		!courseToDelete.creator.equals(currentUser._id)
+	) {
 		return res.status(401).send({ message: 'Unauthorized' });
 	}
 	await courseToDelete.deleteOne();

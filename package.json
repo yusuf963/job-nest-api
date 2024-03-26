@@ -9,7 +9,7 @@
 		"format": "prettier --log-level warn --write '**/*.{ts,js,json,md}'",
 		"eslint": "eslint . --ext=jsx --ext=js --ext=tsx --ext=ts",
 		"debug": "nodemon src/server.js",
-		"start:prod": "Set JOBTAL_ENV=production&node src/server.js"
+		"start:prod": "node src/server.js"
 	},
 	"repository": {
 		"type": "git",

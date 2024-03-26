@@ -87,12 +87,12 @@ router.route('/reset-password').put(resetPassword);
 
 router
 	.route('/courses')
-	.get(adminRoute, handelGetAllCourses)
+	.get(secureRoute, handelGetAllCourses)
 	.post(adminRoute, handelCreateCourse);
 router
 	.route('/courses/:id')
 	.get(secureRoute, handelGetSingleCourse)
-	.put(adminRoute, handelUpdateCourse)
+	.put(secureRoute, handelUpdateCourse)
 	.delete(adminRoute, handelDeleteCourse);
 
 export default router;
