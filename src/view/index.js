@@ -1,6 +1,14 @@
 import express from 'express';
 import { secureRoute, adminRoute } from '../lib/util/secureRoute.js';
 import passport from 'passport';
+
+import {
+	getSingleCourseValidator,
+	createCourseValidator,
+	updateCourseValidator,
+	deleteCourseValidator,
+} from '../lib/util/validation/courseValidator.js';
+
 import {
 	registerUser,
 	loginUser,
@@ -88,11 +96,11 @@ router.route('/reset-password').put(resetPassword);
 router
 	.route('/courses')
 	.get(secureRoute, handelGetAllCourses)
-	.post(adminRoute, handelCreateCourse);
+	.post(adminRoute, createCourseValidator, handelCreateCourse);
 router
 	.route('/courses/:id')
-	.get(secureRoute, handelGetSingleCourse)
-	.put(secureRoute, handelUpdateCourse)
-	.delete(adminRoute, handelDeleteCourse);
+	.get(secureRoute, getSingleCourseValidator, handelGetSingleCourse)
+	.put(secureRoute, updateCourseValidator, handelUpdateCourse)
+	.delete(adminRoute, deleteCourseValidator, handelDeleteCourse);
 
 export default router;
