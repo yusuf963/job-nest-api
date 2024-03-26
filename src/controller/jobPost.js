@@ -44,9 +44,9 @@ const retriveSignleJobPostResourceFromDB = async (jobPostId) => {
 };
 
 const handelGetSingleJob = async (req, res, next) => {
-	const jobPostId = req.param.id;
+	const jobPostId = req.params.id;
 	try {
-		const singleJobPost = retriveSignleJobPostResourceFromDB(jobPostId);
+		const singleJobPost = await retriveSignleJobPostResourceFromDB(jobPostId);
 		if (singleJobPost)
 			return res.status(200).json({ singleJobPost, status: 'succeed' });
 	} catch (error) {
@@ -161,7 +161,7 @@ const handelDeleteJobPost = async (req, res, next) => {
 		) {
 			return res.status(401).send({ message: 'Unauthorized' });
 		}
-		jobPostToDelete.deleteOne();
+		await jobPostToDelete.deleteOne();
 		return res.send(jobPostToDelete);
 	} catch (error) {
 		next(error);
