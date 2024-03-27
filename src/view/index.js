@@ -104,7 +104,7 @@ router.route('/reset-password').put(resetPassword);
 
 router
 	.route('/courses')
-	.get(secureRoute, handelGetAllCourses)
+	.get(handelGetAllCourses)
 	.post(adminRoute, createCourseValidator, handelCreateCourse);
 router
 	.route('/courses/:id')

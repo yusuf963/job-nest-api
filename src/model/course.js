@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { CategoryEnum } from '../lib/util/constants.js';
 
 const courseSchema = new mongoose.Schema(
 	{
@@ -41,6 +42,11 @@ const courseSchema = new mongoose.Schema(
 		creator: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
+			required: true,
+		},
+		category: {
+			type: String,
+			enum: CategoryEnum,
 			required: true,
 		},
 	},
