@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { CategoryEnum } from '../lib/util/constants.js';
 
 const jobPostSchema = new mongoose.Schema({
 	title: {
@@ -99,6 +100,12 @@ const jobPostSchema = new mongoose.Schema({
 			ref: 'User',
 		},
 	],
+	category: {
+		type: String,
+		enum: CategoryEnum,
+		default: 'Other',
+		required: true,
+	},
 });
 
 export default mongoose.model('JobPost', jobPostSchema);
