@@ -65,7 +65,7 @@ const createCourseValidator = [
 
 	check('duration')
 		.notEmpty()
-		.withMessage('Duration field required string')
+		.withMessage('Duration field required')
 		.isNumeric()
 		.withMessage('Duration field required number'),
 

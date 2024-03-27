@@ -3,6 +3,12 @@ import { secureRoute, adminRoute } from '../lib/util/secureRoute.js';
 import passport from 'passport';
 
 import {
+	getSingleJobValidator,
+	createJobPostValidator,
+	updateJobPostValidator,
+	deleteJobPostValidator,
+} from '../lib/util/validation/jobPostValidator.js';
+import {
 	getSingleCourseValidator,
 	createCourseValidator,
 	updateCourseValidator,
@@ -82,12 +88,15 @@ router
 	.put(secureRoute, updateUser)
 	.delete(secureRoute, deleteUser);
 
-router.route('/jobpost').get(handelGetAllJobs).post(handelCreateJobPost);
+router
+	.route('/jobpost')
+	.get(handelGetAllJobs)
+	.post(createJobPostValidator, handelCreateJobPost);
 router
 	.route('/jobpost/:id')
-	.get(secureRoute, handelGetSingleJob)
-	.put(secureRoute, handelUpdateJobPost)
-	.delete(adminRoute, handelDeleteJobPost);
+	.get(secureRoute, getSingleJobValidator, handelGetSingleJob)
+	.put(secureRoute, updateJobPostValidator, handelUpdateJobPost)
+	.delete(adminRoute, deleteJobPostValidator, handelDeleteJobPost);
 
 router.route('/forgot-password').post(forgotPassword);
 router.route('/verify-reset-code').post(verifyResetCode);
