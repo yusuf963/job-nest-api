@@ -6,7 +6,6 @@ import Course from '../model/course.js';
 const retriveCourseFromDB = asyncHandler(
 	async () =>
 		await Course.find({}).sort({ createdAt: -1 }).populate({
-			// most recent added
 			path: 'creator',
 			select: 'username email',
 		}),

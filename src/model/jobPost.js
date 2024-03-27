@@ -103,9 +103,9 @@ const jobPostSchema = new mongoose.Schema({
 	category: {
 		type: String,
 		enum: CategoryEnum,
-		default: "Other",
+		default: 'Other',
 		required: true,
-	}
+	},
 });
 
 export default mongoose.model('JobPost', jobPostSchema);
