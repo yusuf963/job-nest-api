@@ -1,7 +1,12 @@
-import User from '../model/user.js';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import asyncHandler from 'express-async-handler';
+
+import User from '../model/user.js';
+import { APIError, HttpStatusCode } from '../lib/util/errorHandler.js';
+import { sendEmail } from '../lib/util/email.js';
+
 const callbackUrl =
 	process.env.JOBTAL_ENV === 'development'
 		? 'http://localhost:5000/auth/google/callback'
@@ -41,56 +46,73 @@ const configurePassport = () => {
 configureGoogleAuth();
 configurePassport();
 
-const registerUser = async (req, res, next) => {
-	if (req.body.password !== req.body.confirmPassword) {
-		return res.send({ status: 400, message: 'Passwords do not match' });
-	}
+const registerData = (req) => {
+	return {
+		firstName: req.body.firstName,
+		lastName: req.body.lastName,
+		username: req.body.username,
+		email: req.body.email,
+		password: req.body.password,
+		isTermsAgreed: req.body.isTermsAgreed,
+	};
+};
 
-	if (req.body.isAdmin) {
-		delete req.body.isAdmin;
-	}
+const registerUser = asyncHandler(async (req, res, next) => {
 	try {
-		const user = await User.findOne({ email: req.body.email });
-		if (user) {
-			return res
-				.status(409)
-				.send({ status: 409, message: 'User already exists' });
-		}
-		await User.create(req.body);
+		const newUser = await User.create(registerData(req));
 
-		const secret = process.env.JWT_SECRET_KEY;
-		const newUser = await User.findOne({ email: req.body.email });
-		const payload = {
-			email: req.body.email,
-			id: newUser._id,
-		};
-		const email = req.body.email;
-		// const token = jwt.sign(payload, secret, { expiresIn: '72h' });
-		// const link = `${CLIENT_BASE_URL}auth/verify-account/${newUser._id}/${token}`;
-		// sendEmail(link, 'verifyAccountTemplate', email, 'Verify Account');
+		const token = generateVerificationToken(newUser);
+		const verificationLink = generateVerificationLink(req, newUser._id, token);
+		const emailContent = generateVerificationEmail(
+			newUser.email,
+			verificationLink,
+		);
 
-		return res.send({ status: 201, message: 'User has been created' });
-	} catch (err) {
-		if (err.name === 'ValidationError' && err.errors.username) {
-			return res.status(400).send({
-				status: 400,
-				message: 'Username must be unique',
-			});
-		}
-		if (err.name === 'ValidationError' && err.errors.password) {
-			return res.status(400).send({
-				status: 400,
-				message:
-					'password is shorter than the minimum allowed length (8) and must match',
-			});
-		}
-		if (err.name === 'ValidationError') {
-			return res.send({
-				status: 400,
-				message: 'something went wrong please check your details',
-			});
-		}
-		next(err);
+		await sendVerificationEmail(emailContent);
+
+		return res
+			.status(201)
+			.json({ status: 'success', message: 'User created successfully' });
+	} catch (error) {
+		return next(
+			new APIError(
+				'INTERNAL SERVER',
+				HttpStatusCode.INTERNAL_SERVER,
+				true,
+				'An error occurred during user registration',
+			),
+		);
+	}
+});
+
+const generateVerificationToken = (user) => {
+	const secret = process.env.JWT_SECRET_KEY;
+	const expiresTime = process.env.JWT_EXPIRES_IN;
+	const payload = {
+		email: user.email,
+		id: user._id,
+	};
+	return jwt.sign(payload, secret, { expiresIn: expiresTime });
+};
+
+const generateVerificationLink = (req, userId, token) => {
+	return `${req.protocol}://${req.get('host')}/auth/verify-account/${userId}/${token}`;
+};
+
+const generateVerificationEmail = (email, verificationLink) => {
+	return {
+		email: email,
+		subject: 'Verify Your Account',
+		message: `Hi there, Thank you for registering! Please click the following link to verify your account:
+                ${verificationLink} Verify Your Account`,
+	};
+};
+
+const sendVerificationEmail = async (emailContent) => {
+	try {
+		await sendEmail(emailContent);
+	} catch (error) {
+		throw new Error('An error occurred while sending the verification email');
 	}
 };
 

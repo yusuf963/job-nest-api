@@ -22,7 +22,14 @@ const registerValidator = [
 		.notEmpty()
 		.withMessage('User name field required')
 		.isLength({ min: 2, max: 30 })
-		.withMessage('User name field must be between 2 and 30 characters long'),
+		.withMessage('User name field must be between 2 and 30 characters long')
+		.custom(async (val) => {
+			const user = await User.findOne({ username: val });
+			if (user) {
+				throw new Error('User name must be unique');
+			}
+			return true;
+		}),
 
 	check('email')
 		.notEmpty()
