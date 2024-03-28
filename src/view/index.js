@@ -16,6 +16,11 @@ import {
 } from '../lib/util/validation/courseValidator.js';
 
 import {
+	registerValidator,
+	loginValidator,
+} from '../lib/util/validation/authValidator.js';
+
+import {
 	registerUser,
 	loginUser,
 	updateUser,
@@ -77,8 +82,8 @@ router.route('/auth/google/callback').get(
 	}),
 );
 
-router.route('/register').post(registerUser);
-router.route('/login').post(loginUser);
+router.route('/register').post(registerValidator, registerUser);
+router.route('/login').post(loginValidator, loginUser);
 router.route('/verify-account/:id/:token').get(confirmUserVerification);
 
 router.route(environment.usersGetAll).get(adminRoute, getAllUsers);
