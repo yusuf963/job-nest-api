@@ -84,7 +84,7 @@ router.route('/auth/google/callback').get(
 
 router.route('/register').post(registerValidator, registerUser);
 router.route('/login').post(loginValidator, loginUser);
-router.route('/verify-account/:id/:token').get(confirmUserVerification);
+router.route('/auth/verify-account/:id/:token').get(confirmUserVerification);
 
 router.route(environment.usersGetAll).get(adminRoute, getAllUsers);
 router
