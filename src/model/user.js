@@ -47,6 +47,10 @@ const userSchema = new mongoose.Schema({
 	bio: { type: String, required: false, minLength: 6, maxLength: 300 },
 	sex: { type: String, required: false },
 	isAdmin: { type: Boolean, default: false },
+	active: {
+		type: Boolean,
+		default: true,
+	},
 	role: {
 		type: String,
 		enum: ['jobSeeker', 'jobPoster', 'business', 'applicationAdmin'],

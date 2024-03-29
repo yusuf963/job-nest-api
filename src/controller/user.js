@@ -174,81 +174,125 @@ const loginUser = async (req, res, next) => {
 	}
 };
 
-const updateUser = async (req, res, next) => {
-	// TODO: write better logic for saving only the fields that are changed including updates_at and not change createdAt timeStamp in the db.
-	const id = req.params.id;
-	const currentUser = req.currentUser;
-	const body = req.body;
-	try {
-		const userToUpdate = await User.findById(id);
+const createUser = asyncHandler(async (req, res) => {
+	const newUser = await User.create(registerData(req));
+	return res.status(201).json({ status: 'success', newUser });
+});
 
-		if (!userToUpdate) {
-			return res.send({ message: 'No user found with that ID' });
-		}
+const updateUser = asyncHandler(async (req, res, next) => {
+	const userToUpdate = await User.findByIdAndUpdate(
+		req.params.id,
+		{
+			firstName: req.body.firstName,
+			lastName: req.body.lastName,
+			username: req.body.username,
+			email: req.body.email,
+			phone: req.body.phone,
+			address: req.body.address,
+			updatedAt: Date.now(),
+		},
+		{ new: true },
+	);
 
-		if (!currentUser?.isAdmin && !userToUpdate._id.equals(currentUser._id)) {
-			return res
-				.status(401)
-				.send({ message: 'Unauthorized you can not edit this profile' });
-		}
-
-		body.updatedAt = Date.now();
-		await User.findByIdAndUpdate(id, body);
-		const user = await User.findById(id);
-
-		res.send(user);
-	} catch (err) {
-		next(err);
+	if (!userToUpdate) {
+		return next(
+			new APIError(
+				'NOT FOUND',
+				HttpStatusCode.NOT_FOUND,
+				true,
+				'No user found with that ID',
+			),
+		);
 	}
+
+	return res.status(200).json({ status: 'success', updateUser });
+});
+
+const deleteUser = asyncHandler(async (req, res, next) => {
+	const deletedUser = await User.findByIdAndDelete(req.params.id);
+
+	if (!deletedUser) {
+		return next(
+			new APIError(
+				'NOT FOUND',
+				HttpStatusCode.NOT_FOUND,
+				true,
+				'No user found with that ID',
+			),
+		);
+	}
+	return res
+		.status(204)
+		.json({ status: 'success', message: 'User has been deleted' });
+});
+
+const getAllUsers = asyncHandler(async (_req, res) => {
+	const users = await User.find({});
+	return res
+		.status(200)
+		.json({ staust: 'success', results: users.length, users });
+});
+
+const getOneUser = asyncHandler(async (req, res, next) => {
+	const user = await User.findById(req.params.id);
+
+	if (!user) {
+		return next(
+			new APIError(
+				'NOT FOUND',
+				HttpStatusCode.NOT_FOUND,
+				true,
+				'No user found with that ID',
+			),
+		);
+	}
+
+	return res.status(200).json({ stauts: 'success', user });
+});
+
+const getLoggedUserData = (req, _res, next) => {
+	req.params.id = req.currentUser._id;
+	next();
 };
 
-const deleteUser = async (req, res, next) => {
-	const id = req.params.id;
-	const currentUser = req.currentUser;
-	try {
-		const userToDelete = await User.findById(id);
-		if (!userToDelete)
-			return res.send({ message: 'No user found with that ID' });
-		if (!currentUser.isAdmin && !userToDelete._id.equals(currentUser._id)) {
-			return res
-				.status(401)
-				.send({ message: 'Unauthorized you can not edit this profile' });
-		}
-		userToDelete.remove();
-		res.send({
-			message: 'User has been deleted',
-			status: 'success',
-		});
-	} catch (error) {
-		next(error);
-	}
-};
+const updateLoggedUserData = asyncHandler(async (req, res, next) => {
+	const userToUpdate = await User.findByIdAndUpdate(
+		req.currentUser._id,
+		{
+			firstName: req.body.firstName,
+			lastName: req.body.lastName,
+			username: req.body.username,
+			email: req.body.email,
+			phone: req.body.phone,
+			address: req.body.address,
+			updatedAt: Date.now(),
+		},
+		{ new: true },
+	);
 
-const getAllUsers = async (_req, res, next) => {
-	try {
-		const users = await User.find({});
-		res.send(users);
-	} catch (err) {
-		next(err);
+	if (!userToUpdate) {
+		return next(
+			new APIError(
+				'NOT FOUND',
+				HttpStatusCode.NOT_FOUND,
+				true,
+				'No user found with that ID',
+			),
+		);
 	}
-};
 
-const getOneUser = async (req, res, next) => {
-	const userId = req.params.id;
-	try {
-		const user = await User.find({ id: userId });
-		user ? res.send(user) : next();
-	} catch (err) {
-		next(err);
-	}
-};
+	return res.status(200).json({ status: 'success', userToUpdate });
+});
 
 export {
 	registerUser,
 	loginUser,
+	createUser,
 	updateUser,
 	deleteUser,
 	getAllUsers,
 	getOneUser,
 	confirmUserVerification,
+	getLoggedUserData,
+	updateLoggedUserData,
 };
