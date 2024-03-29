@@ -23,11 +23,14 @@ import {
 import {
 	registerUser,
 	loginUser,
+	createUser,
 	updateUser,
 	deleteUser,
 	getAllUsers,
 	getOneUser,
 	confirmUserVerification,
+	getLoggedUserData,
+	updateLoggedUserData,
 } from '../controller/user.js';
 
 import {
@@ -86,12 +89,18 @@ router.route('/register').post(registerValidator, registerUser);
 router.route('/login').post(loginValidator, loginUser);
 router.route('/auth/verify-account/:id/:token').get(confirmUserVerification);
 
-router.route(environment.usersGetAll).get(adminRoute, getAllUsers);
+router.route('/get-me').get(secureRoute, getLoggedUserData, getOneUser);
+router.route('/update-me').put(secureRoute, updateLoggedUserData);
+
+router
+	.route(environment.usersGetAll)
+	.get(adminRoute, getAllUsers)
+	.post(adminRoute, createUser);
 router
 	.route('/user/:id')
 	.get(adminRoute, getOneUser)
-	.put(secureRoute, updateUser)
-	.delete(secureRoute, deleteUser);
+	.put(adminRoute, updateUser)
+	.delete(adminRoute, deleteUser);
 
 router
 	.route('/jobpost')
